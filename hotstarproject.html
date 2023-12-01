@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hotstarproject</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: 'Lato', sans-serif;
+            box-sizing: border-box;
+        }
+
+        .main {
+            width: 100%;
+            min-height: 100vh;
+            background-color: aqua;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .box {
+            padding: 10px;
+            width: 25%;
+            flex-basis: 25%;
+            height: 400px;
+            border-radius: 5px;
+            overflow: hidden;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .box img {
+            width: 100%;
+            height: 100%;
+            box-shadow: 0 4px 5px rgb(0 0 0 / 20%);
+        }
+
+        .box .overlay {
+            width: 100%;
+            max-height: 100%;
+            min-height: auto;
+            position: absolute;
+            bottom: -100%;
+            font-weight: bold;
+            padding: 20px;
+            border-radius: 10px 10px 0px 0px;
+            left: 0;
+            transition: 0.5s;
+            background-color: white;
+        }
+
+        .box span {
+            color: orange;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 25px;
+        }
+
+        .title {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .box:hover .overlay {
+            bottom: 0%;
+        }
+
+        .overlay h2 {
+            margin-bottom: 10px;
+        }
+
+        #search {
+            width: 500px;
+            padding: 5px 30px;
+            background-color: rgba(52, 73, 94, 0.7);
+            outline: none;
+            border: none;
+            box-shadow: 0px 0px 1px white;
+            color: White;
+            margin-top: 10px;
+            font-size: 30px;
+            border-radius: 25px;
+            transition: 1s;
+            margin-bottom: 15px;
+        }
+
+        #search:focus {
+            background-color: white;
+            color: black;
+        }
+
+        #movie-box {
+            display: flex;
+
+            flex-wrap: wrap;
+
+        }
+        #card{
+            display: flex;
+            flex-wrap: wrap;
+        }
+        #h3{
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        #SearchMovi{
+            display: flex;
+            flex-wrap: wrap; 
+        }
+        #h1{
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        #pop{
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="main">
+        <div class="row" style="justify-content: center;">
+            <input type="search" id="search" placeholder="Search here..." oninput="debounce(printdata,2000)" />
+        </div>
+        <div><h1 id="h1"></h1></div>
+        <div id="SearchMovi"></div>
+          <h1 id="pop">POPULAR MOVI</h1>
+           <div class="row" id="movie-box">
+
+        </div>
+        <div><h1 id="h3">MOST-WATCH-MOVIES</h1></div>
+        <div id="card"></div>
+        
+    </div>
+
+</body>
+
+</html>
+<script>
+  let id;
+  let searchdata=document.getElementById("SearchMovi")
+  async function SEARCHMOVI()
+  { 
+    let name=document.getElementById("search").value;
+  let responce= await fetch(`https://api.themoviedb.org/3/search/movie?&api_key=04c35731a5ee918f014970082a0088b1&query=${name}`)
+      let data= await responce.json()
+      //console.log(data);
+      return data.results;
+  }
+  async function printdata()
+  {   
+    searchdata.innerHTML=null;
+       
+    
+    let data= await SEARCHMOVI()
+     
+    data.map((searchData)=>
+    {
+        console.log(searchData);
+        let div = document.createElement("div");
+            div.style.width = "250px"
+            div.style.border = "3px"
+            document.getElementById("h1").innerHTML="SEARCH-MOVI"
+            let img = document.createElement("img");
+            img.src = `https://image.tmdb.org/t/p/w1280${searchData.poster_path}`;
+            img.style.width = "150px"
+            img.style.marging = "5px"
+
+            let name = document.createElement("h3");
+            name.style.backgroundcolor = "black"
+            name.style.padding = "10px"
+            name.innerHTML = searchData.original_title;
+            let overview = document.createElement("p");
+            overview.style.fontSize = "10px"
+            overview.style.fontSizeAdjust = ""
+
+            overview.innerHTML = searchData.overview;
+
+            div.append(img,name,overview)
+
+            searchdata.append(div)
+    })
+  }
+  function debounce( fun ,time)
+  {
+    clearTimeout(id)
+    id=setTimeout(function()
+    {
+        fun()
+    },time)
+  }
+
+
+
+    const APIURL =
+        "https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=04c35731a5ee918f014970082a0088b1&page=1";
+
+
+        const IMGPATH = "https://image.tmdb.org/t/p/w1280";
+
+          const SEARCHAPI =
+            `https://api.themoviedb.org/3/search/movie?&api_key=04c35731a5ee918f014970082a0088b1&query=${name}`;
+
+     let movibox = document.getElementById("movie-box")
+      async function getdata() {
+        let responce = await fetch(APIURL)
+        let data = await responce.json()
+        //console.log(data);
+        return data.results;
+    }
+    async function showData() {
+        let resData = await getdata()
+
+        //console.log(resData);
+
+        resData.map((userData) => {
+
+           // console.log(userData);
+            let div = document.createElement("div");
+            div.style.width = "250px"
+            div.style.border = "3px"
+            let img = document.createElement("img");
+            img.src = `https://image.tmdb.org/t/p/w1280${userData.poster_path}`;
+            img.style.width = "150px"
+            img.style.marging = "5px"
+
+            let name = document.createElement("h3");
+            name.style.backgroundcolor = "black"
+            name.style.padding = "10px"
+            name.innerHTML = userData.original_title;
+            let overview = document.createElement("p");
+            overview.style.fontSize = "10px"
+            overview.style.fontSizeAdjust = ""
+
+            overview.innerHTML = userData.overview;
+
+            div.append(img, name, overview);
+
+            movibox.append(div)
+
+        })
+
+    }
+    showData()
+
+
+    //> for second data
+
+
+    async function FixData()
+    {
+        
+        let responce= await fetch("https://api.themoviedb.org/3/discover/tv?sort_by=popularity.desc&api_key=04c35731a5ee918f014970082a0088b1&page=1");
+        let data= await responce.json();
+        //console.log(data);
+        return data.results;
+    }
+    async function showData2()
+    {
+        let mostwatch=document.getElementById("card")
+        let movi= await FixData()
+       // console.log(movi);
+         movi.map((watchmovi)=>{
+            let div = document.createElement("div");
+            div.style.width = "250px"
+            div.style.border = "3px"
+            let img = document.createElement("img");
+            img.src = `https://image.tmdb.org/t/p/w1280${watchmovi.poster_path}`;
+            img.style.width = "150px"
+            img.style.marging = "5px"
+
+            let name = document.createElement("h3");
+            name.style.backgroundcolor = "black"
+            name.style.padding = "10px"
+            name.innerHTML = watchmovi.original_name;
+            let overview = document.createElement("p");
+            overview.style.fontSize = "10px"
+            overview.style.fontSizeAdjust = ""
+
+            overview.innerHTML = watchmovi.overview;
+
+            div.append(img,name,overview)
+            mostwatch.append(div);
+
+
+         })
+    }
+
+
+showData2()
+</script>
